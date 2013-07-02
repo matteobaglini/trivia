@@ -4,47 +4,63 @@ include_once 'Game.php';
 class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
 {
     private $master = 'master.txt';
+    private $expectedOutput = array();
     private $sample = 10000;
+    private $generation = false;
+
+    public function setUp()
+    {
+        if (!file_exists($this->master)) {
+            $this->generation = true;
+        } else {
+            $this->loadMaster();
+        }
+    }
 
     public function testSeveralThousandsIterationProduceTheSameResultsAsTheGoldStandard()
     {
         $this->output = array();
         srand(0);
-        $this->captureOutput($this->sample);
-        $this->storeMasterIfNotPresent();
-        $this->assertEquals($this->sample, count($this->output));
-        $expectedOutput = $this->loadMaster();
-        $this->assertEquals($expectedOutput, $this->output);
+        for ($i = 0; $i < $this->sample; $i++) {
+            $output = $this->runAndCaptureOutput();
+            $this->assertEqualToMaster($i, $output);
+        }
     }
 
-    private function storeMasterIfNotPresent()
+    private function assertEqualToMaster($i, $output)
     {
-        if (!file_exists($this->master)) {
-            $fp = fopen($this->master, 'w');
-            foreach ($this->output as $run) {
-                fputcsv($fp, explode("\n", $run));
-            }
-            fclose($fp);
+        if ($this->generation) {
+            $this->storeInMaster($output);
+        } else {
+            $this->assertEquals($this->expectedOutput[$i], $output);
         }
+    }
+
+    private function storeInMaster($run)
+    {
+        $fp = fopen($this->master, 'a');
+        fputcsv($fp, explode("\n", $run));
+        fclose($fp);
     }
 
     private function loadMaster()
     {
         $fp = fopen($this->master, 'r');
         while ($run = fgetcsv($fp)) {
-            $expectedOutput[] = implode("\n", $run);
+            $this->expectedOutput[] = implode("\n", $run);
         }
-        return $expectedOutput;
+        return $this->expectedOutput;
     }
 
-    private function captureOutput($games)
+    private function runAndCaptureOutput()
     {
-        for ($i = 1; $i <= $games; $i++) {
-            ob_start(function($output) {
-                $this->output[] = $output;
-            });
-            include 'sandbox/GameRunner.php';
-            ob_end_clean();
-        }
+        $self = $this;
+        $self->output = null;
+        ob_start(function($output) use ($self) {
+            $self->output = $output;
+        });
+        include 'sandbox/GameRunner.php';
+        ob_end_clean();
+        return $self->output;
     }
 }
