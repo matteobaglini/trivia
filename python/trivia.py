@@ -146,6 +146,9 @@ class Game:
 from random import randrange
 
 if __name__ == '__main__':
+    main()
+
+def main():
     not_a_winner = False
 
     game = Game()
