@@ -10,6 +10,12 @@ class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $original = __DIR__ . '/GameRunner.php';
+        $inSandbox = __DIR__ . '/sandbox/GameRunner.php';
+        if (!file_exists($inSandbox)) {
+            exec("ln $original $inSandbox", $output, $returnCode);
+            $this->assertEquals(0, $returnCode, "Linking the GameRunner in the sandbox to avoid multiple include() calls failed.");
+        }
         if (!file_exists($this->master)) {
             $this->fp = fopen($this->master, 'a');
             $this->generation = true;
