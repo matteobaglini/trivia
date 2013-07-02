@@ -6,15 +6,22 @@ class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
     private $master = 'master.txt';
     private $expectedOutput = array();
     private $sample = 10000;
-    private $generation = false;
+    private $generation;
 
     public function setUp()
     {
         if (!file_exists($this->master)) {
+            $this->fp = fopen($this->master, 'a');
             $this->generation = true;
         } else {
-            $this->loadMaster();
+            $this->fp = fopen($this->master, 'r');
+            $this->generation = false;
         }
+    }
+
+    public function tearDown()
+    {
+        fclose($this->fp);
     }
 
     public function testSeveralThousandsIterationProduceTheSameResultsAsTheGoldStandard()
@@ -32,24 +39,19 @@ class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
         if ($this->generation) {
             $this->storeInMaster($output);
         } else {
-            $this->assertEquals($this->expectedOutput[$i], $output);
+            $this->assertEquals($this->loadMasterRun(), $output);
         }
     }
 
     private function storeInMaster($run)
     {
-        $fp = fopen($this->master, 'a');
-        fputcsv($fp, explode("\n", $run));
-        fclose($fp);
+        fputcsv($this->fp, explode("\n", $run));
     }
 
-    private function loadMaster()
+    private function loadMasterRun()
     {
-        $fp = fopen($this->master, 'r');
-        while ($run = fgetcsv($fp)) {
-            $this->expectedOutput[] = implode("\n", $run);
-        }
-        return $this->expectedOutput;
+        $run = fgetcsv($this->fp);
+        return implode("\n", $run);
     }
 
     private function runAndCaptureOutput()
