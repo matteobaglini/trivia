@@ -20,7 +20,7 @@ public class GoldenMasterTest {
 
 	@Test
 	public void goldenMasterMatchesMultipleTriviaRunsOutput() throws Exception {
-		if (Files.exists(Paths.get(GOLDEN_MASTER_PATH))) { 
+		if (!Files.exists(Paths.get(GOLDEN_MASTER_PATH))) { 
 			writeGoldenMaster();
 		}
 
