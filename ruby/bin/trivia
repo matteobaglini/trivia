@@ -4,6 +4,11 @@ $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'ugly_trivia/game'
 
 not_a_winner = false
+if (ARGV.empty?)
+  random = Random.new()
+else
+  random = Random.new(ARGV[0].to_i)
+end
 
 game = UglyTrivia::Game.new
 
@@ -13,9 +18,9 @@ game.add 'Sue'
 
 begin
   
-  game.roll(rand(5) + 1)
+  game.roll(random.rand(5) + 1)
   
-  if rand(9) == 7
+  if random.rand(9) == 7
     not_a_winner = game.wrong_answer
   else
     not_a_winner = game.was_correctly_answered
