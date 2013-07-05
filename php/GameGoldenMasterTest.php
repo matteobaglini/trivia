@@ -5,7 +5,7 @@ class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
 {
     private $master = 'master.txt';
     private $expectedOutput = array();
-    private $sample = 10000;
+    private $sample = 100;
     private $generation;
 
     public function setUp()
