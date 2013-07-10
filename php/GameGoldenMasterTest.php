@@ -62,13 +62,10 @@ class GameGoldenMasterTest extends \PHPUnit_Framework_TestCase
 
     private function runAndCaptureOutput()
     {
-        $self = $this;
-        $self->output = null;
-        ob_start(function($output) use ($self) {
-            $self->output = $output;
-        });
+        ob_start();
         include 'sandbox/GameRunner.php';
+        $output = ob_get_contents();
         ob_end_clean();
-        return $self->output;
+        return $output;
     }
 }
