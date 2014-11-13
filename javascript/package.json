@@ -1,0 +1,28 @@
+{
+  "name": "trivia",
+  "version": "0.0.0",
+  "description": "trivia game",
+  "main": "golden.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gabrielelana/trivia.git"
+  },
+  "keywords": [
+    "trivia",
+    "legacy",
+    "coderetreat"
+  ],
+  "author": "",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "async": "~0.2.9",
+    "jasmine-node": "~1.10.1",
+    "optimist": "~0.6.0",
+    "seedrand": "~0.1.0",
+    "underscore": "~1.4.4"
+  }
+}
